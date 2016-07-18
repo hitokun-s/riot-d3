@@ -8,7 +8,7 @@
     <!--<script type="text/javascript" src="lib/d3/d3.min.js"></script>-->
     <!--<script type="text/javascript" src="lib/riot/riot+compiler.min.js"></script>-->
     <!--<script type="text/javascript" src="lib/RiotControl/riotcontrol.js"></script>-->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/riot/2.5/riot+compiler.min.js"></script>
     <script type="text/javascript" src="https://cdn.rawgit.com/jimsparkman/RiotControl/master/riotcontrol.js"></script>
@@ -35,16 +35,18 @@
             opacity: 0.2;
         }
 
-        #bar {
-            width: 600px;
-            height: 400px;
+        #bar,#bar2 {
+            width: 500px;
+            height: 350px;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Diff Bar Chart</h1>
+    <h3>relativeBandRatio: 0.5</h3>
     <div id="bar"></div>
+    <h3>relativeBandRatio: 1.0</h3>
     <div id="bar2"></div>
 </div>
 
@@ -86,15 +88,15 @@
     riot.compile(function(){
         riot.mount($('#bar')[0], "bar", {
             data: data,
-            width: 500,
-            height: 300,
+            width: $('#bar').width(),
+            height: $('#bar').height(),
             color:"lightgrey",
             margin:{bottom:20, left:30, top:30, right:30}
         });
         riot.mount(d3.select("#bar .base").append("g").node(), "diff-bar", {
             data: data,
-            width: 500,
-            height: 300,
+            width: $('#bar').width(),
+            height: $('#bar').height(),
             relativeBandRatio: 0.5,
             color:"red",
             arrow: true,
@@ -105,15 +107,15 @@
 
         riot.mount($('#bar2')[0], "bar", {
             data: data,
-            width: 500,
-            height: 300,
+            width: $('#bar').width(),
+            height: $('#bar').height(),
             color:"lightgrey",
             margin:{bottom:20, left:30, top:30, right:30}
         });
         riot.mount(d3.select("#bar2 .base").append("g").node(), "diff-bar", {
             data: data,
-            width: 500,
-            height: 300,
+            width: $('#bar').width(),
+            height: $('#bar').height(),
             relativeBandRatio: 1,
             color:"red",
             arrow: true,
