@@ -1,0 +1,31 @@
+{
+  "name": "riot-d3",
+  "authors": [
+    "hitokun-s <jgpuauno@gmail.com>"
+  ],
+  "description": "easy chart library based on d3 and riot",
+  "main": "riot-d3.tag",
+  "keywords": [
+    "d3.js",
+    "riot",
+    "chart"
+  ],
+  "license": "MIT",
+  "homepage": "hitokun-s.github.io/riot-d3/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "jquery": "^3.1.0",
+    "d3": "~3.5.12",
+    "riot": "^2.5.0",
+    "RiotControl": "riotcontrol#*",
+    "bootstrap": "^3.3.6"
+  }
+}

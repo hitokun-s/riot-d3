@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Diff Bar Chart - Riot D3 -</title>
+    <link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="lib/d3/d3.min.js"></script>
+    <script type="text/javascript" src="lib/riot/riot+compiler.min.js"></script>
+    <script type="text/javascript" src="lib/RiotControl/riotcontrol.js"></script>
+    <script src="init.js" type="riot/tag"></script>
+    <script src="rect.tag" type="riot/tag"></script>
+    <script src="circle.tag" type="riot/tag"></script>
+    <script src="bar.tag" type="riot/tag"></script>
+    <script src="diff-bar.tag" type="riot/tag"></script>
+    <style>
+        .arc path {
+            stroke: #fff;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: black;
+        }
+
+        .tick text {
+            font-size: 12px;
+        }
+
+        .tick line {
+            opacity: 0.2;
+        }
+
+        #bar {
+            width: 600px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Diff Bar Chart</h1>
+    <div id="bar"></div>
+    <div id="bar2"></div>
+</div>
+
+<script>
+    var data = [
+        {
+            "name": "2000",
+            "value": 500
+        },
+        {
+            "name": "2001",
+            "value": 700
+        },
+        {
+            "name": "2002",
+            "value": 400
+        },
+        {
+            "name": "2003",
+            "value": 500
+        },
+        {
+            "name": "2004",
+            "value": 300
+        },
+        {
+            "name": "2005",
+            "value": 700
+        },
+        {
+            "name": "2006",
+            "value": 600
+        },
+    ]
+
+    var globalObservable = riot.observable(); // Create a store instance.
+    RiotControl.addStore(globalObservable);
+
+    riot.compile(function(){
+        riot.mount($('#bar')[0], "bar", {
+            data: data,
+            width: 500,
+            height: 300,
+            color:"lightgrey",
+            margin:{bottom:20, left:30, top:30, right:30}
+        });
+        riot.mount(d3.select("#bar .base").append("g").node(), "diff-bar", {
+            data: data,
+            width: 500,
+            height: 300,
+            relativeBandRatio: 0.5,
+            color:"red",
+            arrow: true,
+            margin: {bottom: 20, left: 30, top: 30, right: 30}
+        });
+
+        riot.mount($('#bar2')[0], "bar", {
+            data: data,
+            width: 500,
+            height: 300,
+            color:"lightgrey",
+            margin:{bottom:20, left:30, top:30, right:30}
+        });
+        riot.mount(d3.select("#bar2 .base").append("g").node(), "diff-bar", {
+            data: data,
+            width: 500,
+            height: 300,
+            relativeBandRatio: 1,
+            color:"red",
+            arrow: true,
+            margin: {bottom: 20, left: 30, top: 30, right: 30}
+        });
+    })
+
+    RiotControl.on("rectClicked", function (data) {
+        console.log("rectClicked");
+    });
+
+</script>
+</body>
+</html>

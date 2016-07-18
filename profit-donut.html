@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Riot D3 Test</title>
+    <script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="lib/d3/d3.min.js"></script>
+    <script type="text/javascript" src="lib/riot/riot+compiler.min.js"></script>
+    <script type="text/javascript" src="lib/RiotControl/riotcontrol.js"></script>
+
+    <style>
+        .arc path {
+            stroke: #fff;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: black;
+        }
+
+        /*.line{*/
+        /*fill: none;*/
+        /*stroke: blue;*/
+        /*stroke-width: 2px;*/
+        /*}*/
+
+        .tick text {
+            font-size: 12px;
+        }
+
+        .tick line {
+            opacity: 0.2;
+        }
+
+        #bar {
+            width: 600px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+<div id="profit-donut"></div>
+
+<script src="init.js" type="riot/tag"></script>
+<script src="bar.tag" type="riot/tag"></script>
+<script src="profit-donut.tag" type="riot/tag"></script>
+<script>
+
+    var globalObservable = riot.observable(); // Create a store instance.
+    RiotControl.addStore(globalObservable);
+
+    var data = [
+        {
+            name:"2013",
+            value:300,
+            sales: 300,
+            profit: 40,
+        },
+        {
+            name:"2014",
+            value:200,
+            sales: 200,
+            profit: -40,
+        },
+        {
+            name:"2015",
+            value:400,
+            sales: 400,
+            profit: 50,
+        }
+    ]
+
+    data.forEach(function(d){
+        d.radius = 100 * d.value / d3.max(data, function(d){return d.value});
+    });
+
+    var tags;
+
+//    riot.compile(function () {
+//        tags = riot.mount($('#profit-donut')[0], "profit-donut", {
+//            data: data[0],
+//            width:500,
+//            height:500,
+//            margin:{top:100},
+//            radius:200,
+//        });
+//    });
+    console.log("now mounting!");
+    tags = riot.mount($('#profit-donut')[0], "bar", {
+        data: data,
+        width:800,
+        height:500,
+        margin:{top:100, left:40, bottom:30},
+        innerMargin:{top:100},
+        showGrid: true,
+        yTitle:"Sales",
+        comp:"profit-donut"
+    });
+//    riot.compile(function () {
+//        tags = riot.mount($('#profit-donut')[0], "bar", {
+//            data: data,
+//            width:800,
+//            height:500,
+//            margin:{top:100, left:40, bottom:30},
+//            innerMargin:{top:100},
+//            showGrid: true,
+//            yTitle:"Sales",
+//            comp:"profit-donut"
+//        });
+//    });
+    RiotControl.on("profitDonutClicked", function(data){
+        console.log("profitDonutClicked");
+    });
+
+</script>
+</body>
+</html>

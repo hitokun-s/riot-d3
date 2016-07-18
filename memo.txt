@@ -1,0 +1,14 @@
+参考
+
+http://riotjs.com/api/
+http://riotjs.com/ja/api/
+
+あとRiotControlについて、秀逸StackoverFlow記事があったがどこだっけ？
+http://stackoverflow.com/questions/31435078/riotjs-how-to-pass-events-between-subtags-using-observable-pattern
+
+
+神チュートリアル
+http://streamdata.io/blog/exploring-riot-js-part-3-1/
+http://streamdata.io/blog/exploring-riot-js-part3-2/
+http://streamdata.io/blog/exploring-riot-js-part3-3/
+
