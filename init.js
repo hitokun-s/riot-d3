@@ -5,6 +5,9 @@ var RiotD3Mixin = {
         
         var opts = this.opts;
 
+        opts.xAxis = opts.xAxis == undefined ? true : opts.xAxis;
+        opts.yAxis = opts.yAxis == undefined ? true : opts.yAxis;
+
         var margin = opts.margin || {};
         this.margin = {
             top: margin.top || 0,

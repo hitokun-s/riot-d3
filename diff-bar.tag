@@ -11,6 +11,8 @@
             var margin = this.margin;
             var innerMargin = this.innerMargin;
 
+            var data = opts.data;
+
             // スケールと出力レンジの定義
             var xScale = d3.scale.ordinal().rangeRoundBands([0, width], opts.bandRatio || 0.5); // 幅と余白の比率
             xScale.domain(data.map(function (d) {
@@ -33,49 +35,49 @@
                 return b
             });
 
-            var xAxis = d3.svg.axis()
-                    .scale(xScale)
-                    .orient("bottom")
-                    .innerTickSize(opts.showGrid ? - height : 0)
-                    .outerTickSize(0)
-                    .tickPadding(10);
-            if (opts.xFormat) {
-                xAxis.tickFormat(opts.xFormat);
+            if(opts.xAxis) {
+                var xAxis = d3.svg.axis()
+                        .scale(xScale)
+                        .orient("bottom")
+                        .innerTickSize(opts.showGrid ? -height : 0)
+                        .outerTickSize(0)
+                        .tickPadding(10);
+                if (opts.xFormat) {
+                    xAxis.tickFormat(opts.xFormat);
+                }
+                var xAxisObj = base.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(xAxis)
+                        .selectAll("text")
+                        .style("text-anchor", "middle");
+
+                if (opts.xTitle) {
+                    xAxisObj.append("text").text(opts.xTitle).style("text-anchor", "middle")
+                            .attr("transform", "translate(130,40)");
+                }
             }
 
-            var yAxis = d3.svg.axis()
-                    .scale(yScale)
-                    .innerTickSize(opts.showGrid ? -width : 0)
-                    .outerTickSize(0)
-                    .orient("left")
-                    .tickPadding(10);
-            if (opts.yFormat) {
-                yAxis.tickFormat(opts.yFormat);
-            }
+            if (opts.yAxis) {
+                var yAxis = d3.svg.axis()
+                        .scale(yScale)
+                        .innerTickSize(opts.showGrid ? -width : 0)
+                        .outerTickSize(0)
+                        .orient("left")
+                        .tickPadding(10);
+                if (opts.yFormat) {
+                    yAxis.tickFormat(opts.yFormat);
+                }
+                // y軸をsvgに表示
+                var yAxisObj = base.append("g")
+                        .attr("class", "y axis")
+                        .call(yAxis);
 
-            base.select(".x").call(xAxis);
-
-            var xAxisObj = base.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis)
-                    .selectAll("text")
-                    .style("text-anchor", "middle");
-
-            if (opts.xTitle) {
-                xAxisObj.append("text").text(opts.xTitle).style("text-anchor", "middle")
-                        .attr("transform", "translate(130,40)");
-            }
-
-            // y軸をsvgに表示
-            var yAxisObj = base.append("g")
-                    .attr("class", "y axis")
-                    .call(yAxis);
-
-            if (opts.yTitle) {
-                yAxisObj.append("text")
-                        .text(opts.yTitle).style("text-anchor", "end")
-                        .attr("transform", "translate(0,-10)");
+                if (opts.yTitle) {
+                    yAxisObj.append("text")
+                            .text(opts.yTitle).style("text-anchor", "end")
+                            .attr("transform", "translate(0,-10)");
+                }
             }
 
             var pathData = [];

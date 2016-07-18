@@ -30,7 +30,6 @@
                 var yScale = d3.scale.linear().domain([0, max]).range([height, 0]);
             }
 
-            // 軸の定義
             var xAxis = d3.svg.axis()
                     .scale(xScale)
                     .orient("bottom")
@@ -46,31 +45,6 @@
                     .tickPadding(10);
             if(opts.yFormat){
                 yAxis.tickFormat(opts.yFormat);
-            }
-
-            base.select(".x").call(xAxis);
-
-            var xAxisObj = base.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis)
-                    .selectAll("text")
-                    .style("text-anchor", "middle");
-
-            if(opts.xTitle){
-                xAxisObj.append("text").text(opts.xTitle).style("text-anchor", "middle")
-                        .attr("transform", "translate(130,40)");
-            }
-
-            // y軸をsvgに表示
-            var yAxisObj = base.append("g")
-                    .attr("class", "y axis")
-                    .call(yAxis);
-
-            if(opts.yTitle){
-                yAxisObj.append("text")
-                        .text(opts.yTitle).style("text-anchor", "end")
-                        .attr("transform", "translate(0,-10)");
             }
 
             if(opts.comp){
@@ -112,6 +86,29 @@
                         .attr("height", function (d) {
                             return height - yScale(d.value);
                         });
+            }
+
+            var xAxisObj = base.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis)
+                    .selectAll("text")
+                    .style("text-anchor", "middle");
+
+            if(opts.xTitle){
+                xAxisObj.append("text").text(opts.xTitle).style("text-anchor", "middle")
+                        .attr("transform", "translate(130,40)");
+            }
+
+            // y軸をsvgに表示
+            var yAxisObj = base.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis);
+
+            if(opts.yTitle){
+                yAxisObj.append("text")
+                        .text(opts.yTitle).style("text-anchor", "end")
+                        .attr("transform", "translate(0,-10)");
             }
         });
 
