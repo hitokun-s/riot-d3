@@ -34,6 +34,7 @@
                 diffs.push(b.value - a.value);
                 return b
             });
+            console.log("diff-bar data:", data);
 
             if(opts.xAxis) {
                 var xAxis = d3.svg.axis()
@@ -90,6 +91,10 @@
                 d.y = d.diff >= 0 ? yScale(d.value) : yScale(data[i - 1].value);
                 d.top = d.y;
                 d.bottom = d.top + d.height;
+                console.log("name",d.name);
+                console.log("top",d.top);
+                console.log("bottom",d.bottom);
+                console.log("height",d.height);
                 if(i == 0){
                     return;
                 }
@@ -120,9 +125,9 @@
             if(opts.arrow){
                 data.forEach(function(d,i){
                     if(d.diff > 0){
-                        d.top = d.top + d.width / 2;
+                        d.top = d.top + Math.min(d.width / 2, d.height - 1);
                     }else{
-                        d.bottom = d.bottom - d.width / 2;
+                        d.bottom = d.bottom - Math.min(d.width / 2, d.height - 1);
                     }
                 });
             }

@@ -11,6 +11,8 @@
             var margin = this.margin;
             var innerMargin = this.innerMargin;
 
+            var data = opts.data;
+
             if(opts.patternFunc){
                 opts.patternFunc(base);
             }
