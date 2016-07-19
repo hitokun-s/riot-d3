@@ -10,13 +10,24 @@
             var width = this.width;
             var height = this.height;
             var margin = this.margin;
-            var radius = Math.min(width, height) / 2;
             var data = opts.data;
             var metadata = opts.metadata || {};
 
             var tmp = base.attr("transform").match(/translate\((.*),(.*)\)/);
             var x = ~~tmp[1], y = ~~tmp[2];
-            base.attr("transform", "translate(" + (x + width/2) + "," + ( y + height/2) + ")");
+
+            var radius, startAngle, endAngle;
+            if(opts.semiCircle){
+                radius = Math.min(width / 2, height);
+                base.attr("transform", "translate(" + (x + width/2) + "," + ( y + height/2 + radius / 2) + ")");
+                startAngle = - Math.PI/2;
+                endAngle = Math.PI/2;
+            }else{
+                radius = Math.min(width, height) / 2;
+                base.attr("transform", "translate(" + (x + width/2) + "," + ( y + height/2) + ")");
+                startAngle = 0;
+                endAngle = Math.PI * 2;
+            }
 
             /**
              * Suppoting 3 data patterns.
@@ -88,7 +99,7 @@
             });
 
             var pie = d3.layout.pie()
-                    .startAngle(0).endAngle(Math.PI * 2)
+                    .startAngle(startAngle).endAngle(endAngle)
                     .value(function (d) {
                         return d.value;
                     }).sort(null);

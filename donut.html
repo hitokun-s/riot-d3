@@ -35,7 +35,7 @@
             opacity: 0.2;
         }
 
-        #donut, #donut2 {
+        #donut, #donut2, #donut3 {
             width: 400px;
             height: 400px;
         }
@@ -46,6 +46,7 @@
     <h1>Donut Bar Chart</h1>
     <div id="donut"></div>
     <div id="donut2"></div>
+    <div id="donut3"></div>
 </div>
 
 <script>
@@ -86,6 +87,14 @@
             metadata: {title: "Donut2"},
             width: $('#donut2').width(),
             height: $('#donut2').height(),
+            margin:{bottom:30, left:30, top:30, right:30}
+        });
+        riot.mount($('#donut3')[0], "donut", {
+            data: data[0],
+            metadata: {title: "Donut2"},
+            width: $('#donut2').width(),
+            height: $('#donut2').height(),
+            semiCircle: true,
             margin:{bottom:30, left:30, top:30, right:30}
         });
     });
