@@ -12,6 +12,7 @@
             var margin = this.margin;
             var radius = Math.min(width, height) / 2;
             var data = opts.data;
+            var metadata = opts.metadata || {};
 
             var tmp = base.attr("transform").match(/translate\((.*),(.*)\)/);
             var x = ~~tmp[1], y = ~~tmp[2];
@@ -73,8 +74,6 @@
                 data = _data;
             }
 
-
-
             // cal arcs
             var innerRadius, donutThickness, arcs;
             if(opts.innerRadiusRatio){
@@ -120,7 +119,10 @@
                         .text(function (d, i) {
                             return d.data.name;
                         });
-            })
+            });
+            if(metadata.title){
+                base.append("text").text(metadata.title).style("text-anchor", "middle");
+            }
         });
     </script>
 </donut>
