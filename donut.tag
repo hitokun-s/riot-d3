@@ -16,7 +16,7 @@
 
             var tmp = base.attr("transform").match(/translate\((.*),(.*)\)/);
             var x = ~~tmp[1], y = ~~tmp[2];
-            base.attr("transform", "translate(" + (x + radius) + "," + ( y + radius) + ")");
+            base.attr("transform", "translate(" + (x + width/2) + "," + ( y + height/2) + ")");
 
             /**
              * Suppoting 3 data patterns.
@@ -123,6 +123,10 @@
             if(metadata.title){
                 base.append("text").text(metadata.title).style("text-anchor", "middle");
             }
+            // ラベルを最前面に（なぜこれでうまくいく？）
+            base.selectAll("text").order(function(){
+                return true;
+            })
         });
     </script>
 </donut>
