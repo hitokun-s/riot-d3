@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Donut Chart - Riot D3 -</title>
+    <!--<link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--<script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>-->
+    <!--<script type="text/javascript" src="lib/d3/d3.min.js"></script>-->
+    <!--<script type="text/javascript" src="lib/riot/riot+compiler.min.js"></script>-->
+    <!--<script type="text/javascript" src="lib/RiotControl/riotcontrol.js"></script>-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/riot/2.5/riot+compiler.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/jimsparkman/RiotControl/master/riotcontrol.js"></script>
+    <script type="text/javascript" src="underscore.js/1.8.3/underscore-min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <script src="init.js" type="riot/tag"></script>
+    <script src="donut.tag" type="riot/tag"></script>
+    <style>
+        .arc path {
+            stroke: #fff;
+        }
+
+        .arc text {
+            font-size: 1em;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: black;
+        }
+
+        .tick line {
+            opacity: 0.2;
+        }
+
+        #donut, #donut2 {
+            width: 400px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Donut Bar Chart</h1>
+    <div id="donut"></div>
+    <div id="donut2"></div>
+</div>
+
+<script>
+    var data = [
+        [
+            {"name": "2000","value": 500},
+            {"name": "2001", "value": 700},
+            {"name": "2002", "value": 400},
+            {"name": "2003", "value": 500},
+            {"name": "2004", "value": 300},
+            {"name": "2005", "value": 700},
+            {"name": "2006", "value": 600},
+        ],
+        [
+            {"name": "2000","value": 400},
+            {"name": "2001", "value": 600},
+            {"name": "2002", "value": 400},
+            {"name": "2003", "value": 300},
+            {"name": "2004", "value": 500},
+            {"name": "2005", "value": 800},
+            {"name": "2006", "value": 600},
+        ]
+    ]
+
+    var globalObservable = riot.observable(); // Create a store instance.
+    RiotControl.addStore(globalObservable);
+
+    riot.compile(function(){
+        riot.mount($('#donut')[0], "donut", {
+            data: data,
+            width: $('#donut').width(),
+            height: $('#donut').height(),
+            margin:{bottom:30, left:30, top:30, right:30}
+        });
+        riot.mount($('#donut2')[0], "donut", {
+            data: data[0],
+            width: $('#donut2').width(),
+            height: $('#donut2').height(),
+            margin:{bottom:30, left:30, top:30, right:30}
+        });
+    });
+
+    RiotControl.on("donutClicked", function (data) {
+        console.log("donutClicked");
+    });
+
+</script>
+</body>
+</html>

@@ -12,6 +12,7 @@
             var innerMargin = this.innerMargin;
 
             var data = opts.data;
+            var metadata = opts.metadata || {};
 
             // スケールと出力レンジの定義
             var xScale = d3.scale.ordinal().rangeRoundBands([0, width], opts.bandRatio || 0.5); // 幅と余白の比率
@@ -150,6 +151,8 @@
                             return d.stroke || opts.color;
                         },
                         "stroke-width": (opts.relativeBandRatio || 1) * xScale.rangeBand()
+                    }).on("click", function (d) {
+                        RiotControl.trigger("diffBarClicked", d, metadata);
                     });
 
             if(opts.arrow){
