@@ -64,19 +64,19 @@
             if(type == 3){
                 data.forEach(function(datum){
                     datum.forEach(function(d, i){
-                        d.color = color(i);
+                        d.color = d.color || color(i);
                     });
                 });
             }else{
                 data.forEach(function(d, i){
-                    d.color = color(i);
+                    d.color = d.color || color(i);
                 });
                 var _data = [data];
                 if (type == 2) {
                     var tmp = [];
                     data.forEach(function (d){
                         d.children.forEach(function(child){
-                            child.color = d.color;
+                            child.color = child.color || d.color;
                             tmp.push(child);
                         });
                     });
@@ -123,6 +123,7 @@
                         .attr("transform", function (d) {
                             d.innerRadius = 0;
                             d.outerRadius = radius;
+                            console.log(d);
                             return "translate(" + arcs[i].centroid(d) + ")";
                         })
                         .attr("dy", ".35em")
@@ -134,6 +135,55 @@
             if(metadata.title){
                 base.append("text").text(metadata.title).style("text-anchor", "middle");
             }
+
+            // threshold props: ratio, title
+            if(opts.threshold){
+                var unit = 5;
+                var totalAngle = opts.semiCircle ? Math.PI : Math.PI * 2;
+                var angle = totalAngle * opts.threshold.ratio;
+                var x = (radius + unit * 2) * Math.cos(angle);
+                var y = (radius + unit * 2) * Math.sin(angle);
+                base.append("text").text(opts.threshold.title)
+                        .attr("transform", "translate(" + x + "," + (-y) + ")")
+                        .attr("dy", "-5")
+                        .style("text-anchor", "middle");
+                var line = d3.svg.line()
+                        .x(function (d) {return d.x})
+                        .y(function (d) {return d.y})
+                        .interpolate("cardinal");
+
+                var id = new Date().getTime();
+                var marker = base.append("defs").append("marker").attr({
+                    'id': "arrowhead" + id,
+                    markerUnits: "userSpaceOnUse",
+                    'refX': unit * 2, // to hide boundary line between body and arrow
+                    'refY': unit,
+                    'markerWidth': unit * 2,
+                    'markerHeight': unit * 2,
+                    'orient': "auto"
+                });
+//                marker.append("path").attr({
+//                    d: "M " + unit * 2 + ",0 V " + (unit * 2) + " L 0" + "," + unit + " Z", // reverse arrow
+//                    fill: "black",
+//                    visibility:"visible"
+//                });
+
+//                base.append("path").attr("d", line([
+//                    {x:0, y:0},
+//                    {x:x, y:-y}
+//                ])).attr({
+//                    class: "threshold",
+//                    stroke: " black",
+//                    visibility:"hidden"
+//                }).attr('marker-end',"url(#arrowhead" + id + ")");
+
+                base.append("path").attr({
+                    d: "M " + (-unit) + ",0 H " + unit + " L 0" + "," + (unit * 2) + " Z", // reverse arrow
+                    fill: "black",
+                    transform: "translate(" + x + "," + (-y) + ") rotate(" + (90 - angle * 180 / Math.PI) + ")"
+                });
+            }
+
             // ラベルを最前面に（なぜこれでうまくいく？）
             base.selectAll("text").order(function(){
                 return true;

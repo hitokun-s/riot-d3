@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Donut Chart - Riot D3 -</title>
+    <title>Donut, Double Donut, Semi Donut - Riot D3 -</title>
     <!--<link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">-->
     <!--<script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>-->
     <!--<script type="text/javascript" src="lib/d3/d3.min.js"></script>-->
@@ -43,7 +43,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>Donut Bar Chart</h1>
+    <h1>Donut, Double Donut, Semi Donut </h1>
     <div id="donut"></div>
     <div id="donut2"></div>
     <div id="donut3"></div>
@@ -90,11 +90,23 @@
             margin:{bottom:30, left:30, top:30, right:30}
         });
         riot.mount($('#donut3')[0], "donut", {
-            data: data[0],
+            data: [
+                {"name": "A","value": 500, color:"red"},
+                {"name": "B", "value": 700, color:"red"},
+                {"name": "C", "value": 400, color:"red"},
+                {"name": "D", "value": 500, color:"red"},
+                {"name": "E", "value": 300, color:"lightblue"},
+                {"name": "F", "value": 700, color:"lightblue"},
+                {"name": "G", "value": 600, color:"lightblue"},
+            ],
             metadata: {title: "Donut2"},
             width: $('#donut2').width(),
             height: $('#donut2').height(),
             semiCircle: true,
+            threshold: {
+                ratio: 0.5,
+                title:"threshhold!"
+            },
             margin:{bottom:30, left:30, top:30, right:30}
         });
     });
