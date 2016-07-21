@@ -121,14 +121,18 @@
 
                 g.append("text")
                         .attr("transform", function (d) {
-//                            d.innerRadius = 0;
-//                            d.outerRadius = radius;
-                            d.innerRadius = radius;
-                            d.outerRadius = radius + 50;
-                            console.log(d);
-                            var t = arcs[i].centroid(d);
-                            var ratio = (radius + 30) / ((radius + innerRadius) / 2);
-                            return translate(t[0] * ratio, t[1] * ratio);
+                            if(opts.labelOutside){
+                                d.innerRadius = radius;
+                                d.outerRadius = radius + 50;
+                                console.log(d);
+                                var t = arcs[i].centroid(d);
+                                var ratio = (radius + 30) / ((radius + innerRadius) / 2);
+                                return translate(t[0] * ratio, t[1] * ratio);
+                            } else {
+                                d.innerRadius = 0;
+                                d.outerRadius = radius;
+                                return "translate(" + arcs[i].centroid(d) + ")";
+                            }
                         })
                         .attr("dy", ".35em")
                         .style("text-anchor", "middle")
