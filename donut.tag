@@ -121,10 +121,14 @@
 
                 g.append("text")
                         .attr("transform", function (d) {
-                            d.innerRadius = 0;
-                            d.outerRadius = radius;
+//                            d.innerRadius = 0;
+//                            d.outerRadius = radius;
+                            d.innerRadius = radius;
+                            d.outerRadius = radius + 50;
                             console.log(d);
-                            return "translate(" + arcs[i].centroid(d) + ")";
+                            var t = arcs[i].centroid(d);
+                            var ratio = (radius + 30) / ((radius + innerRadius) / 2);
+                            return translate(t[0] * ratio, t[1] * ratio);
                         })
                         .attr("dy", ".35em")
                         .style("text-anchor", "middle")
@@ -133,7 +137,15 @@
                         });
             });
             if(metadata.title){
-                base.append("text").text(metadata.title).style("text-anchor", "middle");
+                base.append("text").text(metadata.title).attr("font-size", "2em").style("text-anchor", "middle");
+            }
+            if(metadata.titleLeft){
+                base.append("text").text(metadata.titleLeft).style("text-anchor", "middle")
+                        .attr("transform", translate(-(radius + innerRadius)/2 , 20));
+            }
+            if(metadata.titleRight){
+                base.append("text").text(metadata.titleRight).style("text-anchor", "middle")
+                        .attr("transform", translate((radius + innerRadius)/2 , 20));
             }
 
             // threshold props: ratio, title
@@ -188,6 +200,10 @@
             base.selectAll("text").order(function(){
                 return true;
             })
+
+            if(opts.callback){
+                opts.callback(base);
+            }
         });
     </script>
 </donut>

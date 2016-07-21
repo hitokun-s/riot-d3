@@ -125,54 +125,72 @@
             // shrink path to make a space for arrow
             if(opts.arrow){
                 data.forEach(function(d,i){
-                    if(d.diff > 0){
-                        d.top = d.top + Math.min(d.width / 2, d.height - 1);
+                    var standardArrowHeight = d.width / 2;
+                    if(d.height < standardArrowHeight){
+                        d.arrowHeight = d.height;
+                        d.top = d.bottom;
                     }else{
-                        d.bottom = d.bottom - Math.min(d.width / 2, d.height - 1);
+                        d.arrowHeight = standardArrowHeight;
+                        if(d.diff > 0){
+                            d.top = d.top + standardArrowHeight;
+                        }else{
+                            d.bottom = d.bottom - standardArrowHeight;
+                        }
                     }
                 });
             }
-            var bars = base.selectAll("path.diff-bar")
+            var bars = base.selectAll(".diff-bar")
                     .data(data.slice(1))
-                    .enter()
-                    .append("path").classed("diff-bar", true)
-                    .attr("d", function (d) {
-                        var lineData = [
-                            {x:d.midx, y: d.top},
-                            {x:d.midx, y: d.bottom}
-                        ];
-                        return line(d.diff > 0 ? lineData.reverse() : lineData);
-                    })
-                    .attr({
-                        fill: function (d) {
-                            return d.fill || d.color || opts.color || "black";
-                        },
-                        stroke: function (d) {
-                            return d.stroke || opts.color;
-                        },
-                        "stroke-width": (opts.relativeBandRatio || 1) * xScale.rangeBand()
-                    }).on("click", function (d) {
-                        RiotControl.trigger("diffBarClicked", d, metadata);
+                    .enter().append("g").classed("diff-bar", true).attr("transform", function(d){
+                        return "translate(" + d.x + "," + d.y + ")";
                     });
+            bars.append("rect").attr({
+                x: 0,
+                y: function(d){return d.diff > 0 ? d.arrowHeight : 0},
+                width: (opts.relativeBandRatio || 1) * xScale.rangeBand(),
+                height: function (d) {
+                    return d.bottom - d.top;
+                },
+                fill: function (d) {
+                    return d.diffColor || opts.color || "black";
+                },
+                stroke: function (d) {
+                    return d.stroke || opts.color;
+                },
+            }).on("click", function (d) {
+                RiotControl.trigger("diffBarClicked", d, metadata);
+            });
 
             if(opts.arrow){
                 var unit = xScale.rangeBand() / 2;
-                console.log("0 0 " + unit * 2 + " " + unit * 2);
-                var id = new Date().getTime();
-                var marker = base.append("defs").append("marker").attr({
-                            'id': "arrowhead" + id,
-                            markerUnits: "userSpaceOnUse",
-                            'refX': 1, // to hide boundary line between body and arrow
-                            'refY': unit,
-                            'markerWidth': unit,
-                            'markerHeight': unit * 2,
-                            'orient': "auto"
-                        });
-                marker.append("path").attr({
-                            d: "M 0,0 V " + (unit * 2) + " L " + unit + ","+ unit + " Z",
-                            fill: opts.color || "black"
-                        });
-                bars.attr('marker-end',"url(#arrowhead" + id + ")");
+//                console.log("0 0 " + unit * 2 + " " + unit * 2);
+//                var id = new Date().getTime();
+//                var marker = base.append("defs").append("marker").attr({
+//                            'id': "arrowhead" + id,
+//                            markerUnits: "userSpaceOnUse",
+//                            'refX': 1, // to hide boundary line between body and arrow
+//                            'refY': unit,
+//                            'markerWidth': unit,
+//                            'markerHeight': unit * 2,
+//                            'orient': "auto"
+//                        });
+//                marker.append("path").attr({
+//                            d: "M 0,0 V " + (unit * 2) + " L " + unit + ","+ unit + " Z",
+//                            fill: opts.color || "black"
+//                });
+//                bars.attr('marker-end',"url(#arrowhead" + id + ")");
+                bars.append("path").attr("d", function(d){
+                    if(d.diff > 0){
+                        return "M 0," + d.arrowHeight + " H " + (unit * 2) + " L " + unit + ",0 Z";
+                    }else{
+                        return "M 0," + (d.bottom - d.top) + " H " + (unit * 2) + " L " + unit + ","+  (d.bottom - d.top + d.arrowHeight) + " Z";
+                    }
+                }).attr({
+                    fill: opts.color || "black",
+                    class:"arrow"
+                }).on("click", function(d){
+                    RiotControl.trigger("diffBarClicked", d, metadata);
+                });
             }
 
             console.log(pathData);
