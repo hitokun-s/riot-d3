@@ -111,22 +111,25 @@
                 }
             }
 
-            var xAxisObj = base.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis)
-                    .selectAll("text")
-                    .style("text-anchor", "middle");
+            if(opts.showXAxis == undefined || opts.showXAxis){
+                var xAxisObj = base.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(xAxis)
+                        .selectAll("text")
+                        .style("text-anchor", "middle");
+            }
 
             if(opts.xTitle){
                 xAxisObj.append("text").text(opts.xTitle).style("text-anchor", "middle")
                         .attr("transform", "translate(130,40)");
             }
 
-            // y軸をsvgに表示
-            var yAxisObj = base.append("g")
-                    .attr("class", "y axis")
-                    .call(yAxis);
+            if(opts.showYAxis == undefined || opts.showYAxis){
+                var yAxisObj = base.append("g")
+                        .attr("class", "y axis")
+                        .call(yAxis);
+            }
 
             if(opts.yTitle){
                 yAxisObj.append("text")
