@@ -68,26 +68,47 @@
                             });
                         });
             }else{
-                base.selectAll(".bar")
-                        .data(data)
-                        .enter().append("rect")
-                        .attr("class", "bar")
-                        .attr({
-                            x: function (d) {
-                                return xScale(d.name);
-                            },
-                            y: function (d) {
-                                return yScale(d.value);
-                            },
-                            fill:function(d){
-                                return d.fill || d.color || opts.color ||"black";
-                            },
-                            stroke: function(d){return d.stroke}
-                        })
-                        .attr("width", xScale.rangeBand())
-                        .attr("height", function (d) {
-                            return height - yScale(d.value);
-                        });
+                if(opts.barImg){
+                    var translate = function(d){
+                        return "translate(" + (xScale(d.name)+ xScale.rangeBand()/2) + "," + yScale(d.value) + ")";
+                    }
+                    base.selectAll(".bar-img").data(data).enter().append("g").attr({
+                        class: "bar-img",
+                        transform: translate
+                    }).each(function(d){
+                        var self = d3.select(this);
+                        var barHeight = height - yScale(d.value);
+                        for(var i = 0; i < barHeight / opts.barImg.slide ; i++){
+                            self.append("svg:image")
+                                    .attr('x', - xScale.rangeBand()/2)
+                                    .attr('y', height - yScale(d.value) - opts.barImg.height - opts.barImg.slide * i)
+                                    .attr('width', xScale.rangeBand())
+                                    .attr('height', opts.barImg.height)
+                                    .attr("xlink:href", opts.barImg.url);
+                        }
+                    });
+                }else{
+                    base.selectAll(".bar")
+                            .data(data)
+                            .enter().append("rect")
+                            .attr("class", "bar")
+                            .attr({
+                                x: function (d) {
+                                    return xScale(d.name);
+                                },
+                                y: function (d) {
+                                    return yScale(d.value);
+                                },
+                                fill:function(d){
+                                    return d.fill || d.color || opts.color ||"black";
+                                },
+                                stroke: function(d){return d.stroke}
+                            })
+                            .attr("width", xScale.rangeBand())
+                            .attr("height", function (d) {
+                                return height - yScale(d.value);
+                            });
+                }
             }
 
             var xAxisObj = base.append("g")
