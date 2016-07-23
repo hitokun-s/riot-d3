@@ -49,18 +49,31 @@
                 yAxis.tickFormat(opts.yFormat);
             }
 
-            var bars;
             var tmpTranslate = function(d){
                 return translate(xScale(d.name)+ xScale.rangeBand() / 2 , yScale(d.value));
             };
+            var bars = base.selectAll(".bar")
+                    .data(data)
+                    .enter().append("g")
+                    .attr("class", "bar").attr("transform", tmpTranslate);
+
+            // draw onBar name
+            if(data.filter(function(d){return d.nameOnBar;})){
+                bars.append("text").text(function(d){
+                    return opts.nameOnBarFormat ? opts.nameOnBarFormat(d.nameOnBar) : d.nameOnBar;
+                }).attr({
+                    dy: -20,
+                    class: "nameOnBar",
+                    visibility: function(d){
+                        return d.transition ? "hidden": "visible";
+                    },
+                    fill: function(d){return d.color || "red";}
+                }).style("text-anchor", "middle");
+            }
+
             if(opts.comp){
                 console.log("comp found!");
-                bars = base.selectAll(".bar")
-                        .data(data)
-                        .enter().append("g")
-                        .attr("class", "bar")
-                        .attr("transform", tmpTranslate)
-                        .each(function (d) {
+                bars.each(function (d) {
                             riot.mount(this, opts.comp, {
                                 data: d,
                                 width:xScale.rangeBand(),
@@ -70,10 +83,7 @@
                         });
             }else{
                 if(opts.barImg){
-                    bars = base.selectAll(".bar-img").data(data).enter().append("g").attr({
-                        class: "bar-img",
-                        transform: tmpTranslate
-                    }).each(function(d){
+                    bars.each(function(d){
                         var self = d3.select(this);
                         var barHeight = height - yScale(d.value);
                         var count = parseInt(barHeight / opts.barImg.slide);
@@ -111,46 +121,33 @@
                         }
                     });
                 }else{
-                    bars = base.selectAll(".bar")
-                            .data(data)
-                            .enter().append("rect")
-                            .attr("class", "bar")
-                            .attr({
-                                x: function (d) {
-                                    return xScale(d.name);
-                                },
-                                y: function (d) {
-                                    return d.transition ?  height : yScale(d.value);
-                                },
-                                fill:function(d){
-                                    return d.fill || d.color || opts.color ||"black";
-                                },
-                                stroke: function(d){return d.stroke}
-                            })
-                            .attr("width", xScale.rangeBand())
-                            .attr("height", function (d) {
-                                return d.transition ? 0 : height - yScale(d.value);
-                            });
-                    bars.filter(function(d){
-                                return d.transition;
-                            }).transition().duration(1000).attr({
-                                y: function (d) {
-                                    return yScale(d.value);
-                                },
-                                height: function (d) {
-                                    return height - yScale(d.value);
-                                },
-                            });
+                    var rect = bars.append("rect").attr({
+                        x: - xScale.rangeBand() / 2,
+                        y: function (d) {
+                            return d.transition ? height - yScale(d.value) : 0;
+                        },
+                        width: xScale.rangeBand(),
+                        height: function (d) {
+                            return d.transition ? 0 : height - yScale(d.value);
+                        },
+                        fill: function (d) {
+                            return d.fill || d.color || opts.color || "black";
+                        },
+                        stroke: function (d) {
+                            return d.stroke;
+                        }
+                    });
+                    rect.filter(function (d) {
+                        return d.transition;
+                    }).transition().duration(1000).attr({
+                        y: 0,
+                        height: function (d) {
+                            return height - yScale(d.value);
+                        },
+                    }).each("end", function(d){
+                        d3.select(this.parentNode).select("text").attr("visibility","visible");
+                    })
                 }
-            }
-            // draw onBar name
-            if(data.filter(function(d){return d.nameOnBar;})){
-                bars.append("text").text(function(d){
-                    return opts.nameOnBarFormat ? opts.nameOnBarFormat(d.nameOnBar) : d.nameOnBar;
-                }).attr({
-                    dy: -20,
-                    class: "nameOnBar"
-                }).style("text-anchor", "middle");
             }
 
             if(opts.showXAxis == undefined || opts.showXAxis){
