@@ -49,16 +49,17 @@
                 yAxis.tickFormat(opts.yFormat);
             }
 
+            var bars;
+            var tmpTranslate = function(d){
+                return translate(xScale(d.name)+ xScale.rangeBand() / 2 , yScale(d.value));
+            };
             if(opts.comp){
                 console.log("comp found!");
-                var translate = function(d){
-                    return "translate(" + (xScale(d.name)+ xScale.rangeBand()/2) + "," + yScale(d.value) + ")";
-                }
-                base.selectAll(".bar")
+                bars = base.selectAll(".bar")
                         .data(data)
                         .enter().append("g")
                         .attr("class", "bar")
-                        .attr("transform", translate)
+                        .attr("transform", tmpTranslate)
                         .each(function (d) {
                             riot.mount(this, opts.comp, {
                                 data: d,
@@ -69,12 +70,9 @@
                         });
             }else{
                 if(opts.barImg){
-                    var translate = function(d){
-                        return "translate(" + (xScale(d.name)+ xScale.rangeBand()/2) + "," + yScale(d.value) + ")";
-                    }
-                    base.selectAll(".bar-img").data(data).enter().append("g").attr({
+                    bars = base.selectAll(".bar-img").data(data).enter().append("g").attr({
                         class: "bar-img",
-                        transform: translate
+                        transform: tmpTranslate
                     }).each(function(d){
                         var self = d3.select(this);
                         var barHeight = height - yScale(d.value);
@@ -88,7 +86,7 @@
                         }
                     });
                 }else{
-                    base.selectAll(".bar")
+                    bars = base.selectAll(".bar")
                             .data(data)
                             .enter().append("rect")
                             .attr("class", "bar")
@@ -109,6 +107,12 @@
                                 return height - yScale(d.value);
                             });
                 }
+            }
+            // draw onBar name
+            if(data.filter(function(d){return d.nameOnBar;})){
+                bars.append("text").text(function(d){return d.nameOnBar;}).attr({
+                    dy: -20
+                }).style("text-anchor", "middle");
             }
 
             if(opts.showXAxis == undefined || opts.showXAxis){

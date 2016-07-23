@@ -37,6 +37,10 @@ var RiotD3Mixin = {
 
         this.width = width - (this.margin.left + this.margin.right); // inner width
         this.height = height - (this.margin.top + this.margin.bottom); // inner height
-    }
+    },
 };
+
+var translate = function(x, y){
+    return "translate(" + x + "," + y + ")";
+}
 

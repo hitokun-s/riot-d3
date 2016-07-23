@@ -139,13 +139,17 @@
                     }
                 });
             }
+            var tmpTranslate = function(d){
+                return translate(d.x + xScale.rangeBand() / 2 , d.y);
+            };
             var bars = base.selectAll(".diff-bar")
                     .data(data.slice(1))
-                    .enter().append("g").classed("diff-bar", true).attr("transform", function(d){
-                        return "translate(" + d.x + "," + d.y + ")";
+                    .enter().append("g").attr({
+                        transform: tmpTranslate,
+                        class: "diffBar"
                     });
             bars.append("rect").attr({
-                x: 0,
+                x: - (opts.relativeBandRatio || 1) * xScale.rangeBand() / 2 ,
                 y: function(d){return d.diff > 0 ? d.arrowHeight : 0},
                 width: (opts.relativeBandRatio || 1) * xScale.rangeBand(),
                 height: function (d) {
@@ -161,29 +165,23 @@
                 RiotControl.trigger("diffBarClicked", d, metadata);
             });
 
+            // draw onBar name
+            if(data.filter(function(d){return d.nameOnBar;})){
+                bars.append("text").text(function(d){return d.nameOnBar;}).attr({
+                    dy: -20,
+                    class: "nameOnBar"
+                }).style("text-anchor", "middle").on("click", function(d){
+                    RiotControl.trigger("diffBarClicked", d, metadata);
+                });
+            }
+
             if(opts.arrow){
                 var unit = xScale.rangeBand() / 2;
-//                console.log("0 0 " + unit * 2 + " " + unit * 2);
-//                var id = new Date().getTime();
-//                var marker = base.append("defs").append("marker").attr({
-//                            'id': "arrowhead" + id,
-//                            markerUnits: "userSpaceOnUse",
-//                            'refX': 1, // to hide boundary line between body and arrow
-//                            'refY': unit,
-//                            'markerWidth': unit,
-//                            'markerHeight': unit * 2,
-//                            'orient': "auto"
-//                        });
-//                marker.append("path").attr({
-//                            d: "M 0,0 V " + (unit * 2) + " L " + unit + ","+ unit + " Z",
-//                            fill: opts.color || "black"
-//                });
-//                bars.attr('marker-end',"url(#arrowhead" + id + ")");
                 bars.append("path").attr("d", function(d){
                     if(d.diff > 0){
-                        return "M 0," + d.arrowHeight + " H " + (unit * 2) + " L " + unit + ",0 Z";
+                        return "M " + (-unit) + "," + d.arrowHeight + " H " + unit + " L 0,0 Z";
                     }else{
-                        return "M 0," + (d.bottom - d.top) + " H " + (unit * 2) + " L " + unit + ","+  (d.bottom - d.top + d.arrowHeight) + " Z";
+                        return "M " + (-unit) + "," + (d.bottom - d.top) + " H " + unit + " L 0,"+  (d.bottom - d.top + d.arrowHeight) + " Z";
                     }
                 }).attr({
                     fill: opts.color || "black",
