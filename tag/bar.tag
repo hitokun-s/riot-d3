@@ -35,7 +35,7 @@
             var xAxis = d3.svg.axis()
                     .scale(xScale)
                     .orient("bottom")
-                    .innerTickSize(opts.showGrid ? - height : 0)
+                    .innerTickSize(0)
                     .outerTickSize(0)
                     .tickPadding(10);
 
