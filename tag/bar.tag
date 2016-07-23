@@ -84,6 +84,7 @@
             }else{
                 if(opts.barImg){
                     bars.each(function(d){
+                        var selfNode = this;
                         var self = d3.select(this);
                         var barHeight = height - yScale(d.value);
                         var count = parseInt(barHeight / opts.barImg.slide);
@@ -107,6 +108,7 @@
                                 counter++;
                                 if(counter >= count){
                                     clearTimeout(timer);
+                                    self.select("text").attr("visibility","visible");
                                 }
                             }, 1000 / count);
                         }else{
