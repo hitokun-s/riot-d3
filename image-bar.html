@@ -56,6 +56,7 @@
         {
             "name": "2001",
             "value": 700,
+            transition: true,
             nameOnBar: "700円"
         },
     ]
@@ -69,12 +70,14 @@
             width: $('#bar').width(),
             height: $('#bar').height(),
             color:"lightgrey",
+//            transition:true,
+            showGrid:true,
             barImg: {
                 url: "img/coin.png",
                 slide: 20,
                 height: 30
             },
-            margin:{bottom:20, left:30, top:30, right:30}
+            margin:{bottom:20, left:30, top:40, right:30}
         });
     });
 

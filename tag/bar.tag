@@ -65,7 +65,7 @@
                                 data: d,
                                 width:xScale.rangeBand(),
                                 height: height - yScale(d.value),
-                                radius: d.radius, // 呼び出し側の責任で用意する
+                                radius: d.radius // 呼び出し側の責任で用意する
                             });
                         });
             }else{
@@ -76,17 +76,41 @@
                     }).each(function(d){
                         var self = d3.select(this);
                         var barHeight = height - yScale(d.value);
-                        for(var i = 0; i < barHeight / opts.barImg.slide ; i++){
-                            //.transition().duration(800)
-
-                            self.append("svg:image")
-                                    .attr('x', - xScale.rangeBand()/2)
-                                    .attr('y', height - yScale(d.value) - opts.barImg.height - opts.barImg.slide * i)
-                                    .attr('width', xScale.rangeBand())
-                                    .attr('height', opts.barImg.height)
-                                    .attr("xlink:href", opts.barImg.url);
+                        var count = parseInt(barHeight / opts.barImg.slide);
+//                        console.log(count);
+//                        console.log("barHeight", barHeight);
+//                        console.log("count * opts.barImg.slide +  opts.barImg.height", count * opts.barImg.slide +  opts.barImg.height);
+//                        console.log("barHeight + opts.barImg.height/2", barHeight + opts.barImg.height/2);
+//                        console.log((count - 1) * opts.barImg.slide +  opts.barImg.height > barHeight + opts.barImg.height/2);
+                        if((count - 1) * opts.barImg.slide +  opts.barImg.height > barHeight + opts.barImg.height/2){
+                            count--;
+                        }
+                        if(d.transition){
+                            var counter = 0;
+                            var timer = setInterval(function(){
+                                self.append("svg:image")
+                                        .attr('x', - xScale.rangeBand()/2)
+                                        .attr('y', height - yScale(d.value) - opts.barImg.height - opts.barImg.slide * counter)
+                                        .attr('width', xScale.rangeBand())
+                                        .attr('height', opts.barImg.height)
+                                        .attr("xlink:href", opts.barImg.url);
+                                counter++;
+                                if(counter >= count){
+                                    clearTimeout(timer);
+                                }
+                            }, 1000 / count);
+                        }else{
+                            for (var i = 0; i < count; i++) {
+                                self.append("svg:image")
+                                        .attr('x', -xScale.rangeBand() / 2)
+                                        .attr('y', height - yScale(d.value) - opts.barImg.height - opts.barImg.slide * i)
+                                        .attr('width', xScale.rangeBand())
+                                        .attr('height', opts.barImg.height)
+                                        .attr("xlink:href", opts.barImg.url);
+                            }
                         }
                     });
+                    //.transition().duration(800)
                 }else{
                     bars = base.selectAll(".bar")
                             .data(data)
