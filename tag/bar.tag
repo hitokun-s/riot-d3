@@ -23,7 +23,7 @@
                 return d.name;
             }));
 
-            var max = d3.max(data.map(function (d) {
+            var max = opts.max || d3.max(data.map(function (d) {
                 return d.value;
             }));
             if(innerMargin.top > 0){
@@ -77,6 +77,8 @@
                         var self = d3.select(this);
                         var barHeight = height - yScale(d.value);
                         for(var i = 0; i < barHeight / opts.barImg.slide ; i++){
+                            //.transition().duration(800)
+
                             self.append("svg:image")
                                     .attr('x', - xScale.rangeBand()/2)
                                     .attr('y', height - yScale(d.value) - opts.barImg.height - opts.barImg.slide * i)
@@ -110,8 +112,11 @@
             }
             // draw onBar name
             if(data.filter(function(d){return d.nameOnBar;})){
-                bars.append("text").text(function(d){return d.nameOnBar;}).attr({
-                    dy: -20
+                bars.append("text").text(function(d){
+                    return opts.nameOnBarFormat ? opts.nameOnBarFormat(d.nameOnBar) : d.nameOnBar;
+                }).attr({
+                    dy: -20,
+                    class: "nameOnBar"
                 }).style("text-anchor", "middle");
             }
 

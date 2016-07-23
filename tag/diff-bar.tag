@@ -167,7 +167,9 @@
 
             // draw onBar name
             if(data.filter(function(d){return d.nameOnBar;})){
-                bars.append("text").text(function(d){return d.nameOnBar;}).attr({
+                bars.append("text").text(function(d) {
+                    return opts.nameOnBarFormat ? opts.nameOnBarFormat(d.nameOnBar) : d.nameOnBar;
+                }).attr({
                     dy: -20,
                     class: "nameOnBar"
                 }).style("text-anchor", "middle").on("click", function(d){
