@@ -110,7 +110,6 @@
                             }
                         }
                     });
-                    //.transition().duration(800)
                 }else{
                     bars = base.selectAll(".bar")
                             .data(data)
@@ -121,7 +120,7 @@
                                     return xScale(d.name);
                                 },
                                 y: function (d) {
-                                    return yScale(d.value);
+                                    return d.transition ?  height : yScale(d.value);
                                 },
                                 fill:function(d){
                                     return d.fill || d.color || opts.color ||"black";
@@ -130,7 +129,17 @@
                             })
                             .attr("width", xScale.rangeBand())
                             .attr("height", function (d) {
-                                return height - yScale(d.value);
+                                return d.transition ? 0 : height - yScale(d.value);
+                            });
+                    bars.filter(function(d){
+                                return d.transition;
+                            }).transition().duration(1000).attr({
+                                y: function (d) {
+                                    return yScale(d.value);
+                                },
+                                height: function (d) {
+                                    return height - yScale(d.value);
+                                },
                             });
                 }
             }
