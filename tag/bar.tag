@@ -78,6 +78,8 @@
                                 data: d,
                                 width:xScale.rangeBand(),
                                 height: height - yScale(d.value),
+                                asComp: true,
+                                clickEventName: opts.clickEventName,
                                 radius: d.radius // 呼び出し側の責任で用意する
                             });
                         });

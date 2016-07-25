@@ -27,7 +27,7 @@ var RiotD3Mixin = {
         };
 
         this.base = d3.select(this.root);
-        if(["svg","g"].indexOf(this.root.tagName.toLowerCase()) < 0){ // I have root svg! Not a child of any other svg element.
+        if(["svg","g"].indexOf(this.root.tagName.toLowerCase()) < 0){ // I must own root svg! Not a child of any other svg element.
             this.base = this.base.append("svg").attr({
                 width: opts.width,
                 height: opts.height
