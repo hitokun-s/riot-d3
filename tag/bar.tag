@@ -12,13 +12,14 @@
             var innerMargin = this.innerMargin;
 
             var data = opts.data;
+            var self = this;
 
             if(opts.patternFunc){
                 opts.patternFunc(base);
             }
 
             // スケールと出力レンジの定義
-            var xScale = d3.scale.ordinal().rangeRoundBands([0, width], 0.5); // 幅と余白の比率
+            var xScale = d3.scale.ordinal().rangeRoundBands([0, width], opts.barWidthRatio || 0.5); // 幅と余白の比率
             xScale.domain(data.map(function (d) {
                 return d.name;
             }));
@@ -49,6 +50,18 @@
                 yAxis.tickFormat(opts.yFormat);
             }
 
+            if(opts.showYAxis == undefined || opts.showYAxis){
+                var yAxisObj = base.append("g")
+                        .attr("class", "y axis")
+                        .call(yAxis);
+            }
+
+            if(opts.yTitle){
+                yAxisObj.append("text")
+                        .text(opts.yTitle).style("text-anchor", "end")
+                        .attr("transform", "translate(0,-10)");
+            }
+
             var tmpTranslate = function(d){
                 return translate(xScale(d.name)+ xScale.rangeBand() / 2 , yScale(d.value));
             };
@@ -56,20 +69,6 @@
                     .data(data)
                     .enter().append("g")
                     .attr("class", "bar").attr("transform", tmpTranslate);
-
-            // draw onBar name
-            if(data.filter(function(d){return d.nameOnBar;})){
-                bars.append("text").text(function(d){
-                    return opts.nameOnBarFormat ? opts.nameOnBarFormat(d.nameOnBar) : d.nameOnBar;
-                }).attr({
-                    dy: -20,
-                    class: "nameOnBar",
-                    visibility: function(d){
-                        return d.transition ? "hidden": "visible";
-                    },
-                    fill: function(d){return d.color || "red";}
-                }).style("text-anchor", "middle");
-            }
 
             if(opts.comp){
                 console.log("comp found!");
@@ -154,6 +153,20 @@
                 }
             }
 
+            // draw onBar name
+            if(data.filter(function(d){return d.nameOnBar;})){
+                bars.append("text").text(function(d){
+                    return opts.nameOnBarFormat ? opts.nameOnBarFormat(d.nameOnBar) : d.nameOnBar;
+                }).attr({
+                    dy: -20,
+                    class: "nameOnBar",
+                    visibility: function(d){
+                        return d.transition ? "hidden": "visible";
+                    },
+                    fill: function(d){return d.color || "red";}
+                }).style("text-anchor", "middle");
+            }
+
             if(opts.showXAxis == undefined || opts.showXAxis){
                 var xAxisObj = base.append("g")
                         .attr("class", "x axis")
@@ -168,17 +181,6 @@
                         .attr("transform", "translate(130,40)");
             }
 
-            if(opts.showYAxis == undefined || opts.showYAxis){
-                var yAxisObj = base.append("g")
-                        .attr("class", "y axis")
-                        .call(yAxis);
-            }
-
-            if(opts.yTitle){
-                yAxisObj.append("text")
-                        .text(opts.yTitle).style("text-anchor", "end")
-                        .attr("transform", "translate(0,-10)");
-            }
         });
 
     </script>
