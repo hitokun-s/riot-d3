@@ -44,3 +44,11 @@ var translate = function(x, y){
     return "translate(" + x + "," + y + ")";
 }
 
+var sum = function(data, prop){
+    var total = 0;
+    data.forEach(function(d){
+        total = total + d[prop];
+    });
+    return total;
+}
+

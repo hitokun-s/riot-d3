@@ -15,6 +15,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <script src="init.js" type="riot/tag"></script>
     <script src="tag/treemap.tag" type="riot/tag"></script>
+    <script src="tag/stack.tag" type="riot/tag"></script>
     <style>
         .arc path {
             stroke: #fff;
@@ -34,8 +35,17 @@
             opacity: 0.2;
         }
 
-        #band {
+        #band{
             width: 600px;
+            height: 100px;
+        }
+
+        #band2{
+            width: 100px;
+            height: 400px;
+        }
+        #band3{
+            width: 400px;
             height: 100px;
         }
     </style>
@@ -43,7 +53,12 @@
 <body>
 <div class="container">
     <h1>Band Chart</h1>
+    <h3>Sample1: Using Treemap</h3>
     <div id="band"></div>
+    <h3>Sample2: Using Stacked Bar</h3>
+    <div id="band2"></div>
+    <h3>Sample3: Using Stacked Bar(horizontal)</h3>
+    <div id="band3"></div>
 </div>
 
 <script>
@@ -75,6 +90,15 @@
         ]
     };
 
+    var cloneArray = function(arr){
+        var cloned = $.extend(true, {}, arr);
+        var res = [];
+        for(var idx in cloned){
+            res.push(cloned[idx]);
+        }
+        return res;
+    }
+
     var globalObservable = riot.observable(); // Create a store instance.
     RiotControl.addStore(globalObservable);
 
@@ -84,7 +108,24 @@
             width: $('#band').width(),
             height: $('#band').height(),
             showDepth:1,
+            clickTargetDepth:-1,
             showText: true,
+            margin:{bottom:20, left:30, top:40, right:30}
+        });
+
+        riot.mount($('#band2')[0], "stack", {
+            data: cloneArray(data.children).reverse(),
+            width: $('#band2').width(),
+            height: $('#band2').height(),
+            showText: true,
+            margin:{bottom:20, left:30, top:40, right:30}
+        });
+        riot.mount($('#band3')[0], "stack", {
+            data: cloneArray(data.children).reverse(),
+            width: $('#band3').width(),
+            height: $('#band3').height(),
+            showText: true,
+            orientation:"horizontal",
             margin:{bottom:20, left:30, top:40, right:30}
         });
     });

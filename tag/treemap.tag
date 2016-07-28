@@ -21,6 +21,22 @@
             var margin = this.margin;
             var innerMargin = this.innerMargin;
 
+//            if(innerMargin && innerMargin.top){
+//                var tmp = base.attr("transform").match(/translate\((.*),(.*)\)/);
+//                var x = ~~tmp[1], y = ~~tmp[2];
+//                base.attr("transform", transform(x, y + innerMargin.top));
+//            }
+
+            base.attr("class","treemap");
+
+            if(opts.annotation){
+                base.append("text").text(opts.annotation).attr({
+                    class: "annotation",
+                    x: width,
+                    y: -10
+                }).style("text-anchor", "end");
+            }
+
             var data = opts.data;
             var metadata = opts.metadata || {};
             var clickEventName = opts.clickEventName || "treemapClicked";

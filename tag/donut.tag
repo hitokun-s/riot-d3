@@ -29,6 +29,14 @@
                 endAngle = Math.PI * 2;
             }
 
+            if(opts.annotation){
+                base.append("text").text(opts.annotation).attr({
+                    class: "annotation",
+                    x: radius,
+                    y: - radius
+                }).style("text-anchor", "end");
+            }
+
             /**
              * Suppoting 3 data patterns.
              *

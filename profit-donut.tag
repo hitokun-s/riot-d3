@@ -16,6 +16,8 @@
         var margin = this.margin;
         var innerMargin = this.innerMargin;
 
+        base.attr("class","profit-donut");
+
         var oriData = opts.data;
         var arc = d3.svg.arc().outerRadius(opts.radius).innerRadius(opts.radius - 30);
 
@@ -44,6 +46,9 @@
                 .style("opacity", 0)
                 .on("click", function(d){
                     RiotControl.trigger("profitDonutClicked", d.data);
+                    base.selectAll("path").attr("fill", function(d){
+                        return d.data.color;
+                    });
                 })
                 .attr("fill", function (d, i) {
                     return d.data.color;
@@ -54,5 +59,13 @@
                 .attr("transform", "translate(0," + (-opts.radius - 10) + ")")
                 .style("text-anchor", "middle")
                 .text(~~(oriData.profit * 100 / oriData.sales) + "%");
+
+        base.on("mouseover", function(){
+            base.selectAll("path").attr("fill", "lightblue");
+        }).on("mouseout", function(){
+            base.selectAll("path").attr("fill", function(d){
+                return d.data.color;
+            });
+        });
     </script>
 </profit-donut>

@@ -15,6 +15,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <script src="init.js" type="riot/tag"></script>
     <script src="tag/bar.tag" type="riot/tag"></script>
+    <script src="tag/stack.tag" type="riot/tag"></script>
     <style>
         .arc path {
             stroke: #fff;
@@ -34,7 +35,7 @@
             opacity: 0.2;
         }
 
-        #bar {
+        #bar, #bar2, #stackedBar, #stackedBar2 {
             width: 500px;
             height: 350px;
         }
@@ -44,6 +45,9 @@
 <div class="container">
     <h1>Simple Bar Chart</h1>
     <div id="bar"></div>
+    <div id="bar2"></div>
+    <div id="stackedBar"></div>
+    <div id="stackedBar2"></div>
 </div>
 
 <script>
@@ -87,6 +91,79 @@
         },
     ]
 
+    var data2 = [
+        {
+            "name": "2000",
+            "value": 500,
+            data: [
+                {name:"A", value:200},
+                {name:"B", value:200},
+                {name:"C", value:100}
+            ],
+            nameOnBar: "500"
+        },
+        {
+            "name": "2001",
+            "value": 700,
+            data: [
+                {name:"A", value:200},
+                {name:"B", value:300},
+                {name:"C", value:200}
+            ],
+            nameOnBar: "700"
+        },
+        {
+            "name": "2002",
+            "value": 400,
+            data: [
+                {name:"A", value:200},
+                {name:"B", value:100},
+                {name:"C", value:100}
+            ],
+            nameOnBar: "400"
+        },
+        {
+            "name": "2003",
+            "value": 500,
+            data: [
+                {name:"A", value:100},
+                {name:"B", value:200},
+                {name:"C", value:200}
+            ],
+            nameOnBar: "500"
+        },
+        {
+            "name": "2004",
+            "value": 300,
+            data: [
+                {name:"A", value:150},
+                {name:"B", value:50},
+                {name:"C", value:100}
+            ],
+            nameOnBar: "300"
+        },
+        {
+            "name": "2005",
+            "value": 700,
+            data: [
+                {name:"A", value:300},
+                {name:"B", value:200},
+                {name:"C", value:200}
+            ],
+            nameOnBar: "700"
+        },
+        {
+            "name": "2006",
+            "value": 600,
+            data: [
+                {name:"A", value:200},
+                {name:"B", value:200},
+                {name:"C", value:200}
+            ],
+            nameOnBar: "600"
+        }
+    ]
+
     var globalObservable = riot.observable(); // Create a store instance.
     RiotControl.addStore(globalObservable);
 
@@ -98,6 +175,34 @@
             color:"lightcoral",
             showGrid:true,
             margin:{bottom:20, left:30, top:40, right:30}
+        });
+        riot.mount($('#bar2')[0], "bar", {
+            data: data,
+            width: $('#bar2').width(),
+            height: $('#bar2').height(),
+            color:"lightcoral",
+            showGrid:true,
+            orientation: "horizontal",
+            innerMargin: {right: 30},
+            margin:{bottom:20, left:40, top:40, right:30}
+        });
+        riot.mount($('#stackedBar')[0], "bar", {
+            data: data2,
+            width: $('#stackedBar').width(),
+            height: $('#stackedBar').height(),
+            comp: "stack",
+            showGrid:true,
+            margin:{bottom:20, left:30, top:40, right:30}
+        });
+        riot.mount($('#stackedBar2')[0], "bar", {
+            data: data2,
+            width: $('#stackedBar2').width(),
+            height: $('#stackedBar2').height(),
+            comp: "stack",
+            showGrid:true,
+            orientation: "horizontal",
+            innerMargin: {right: 30},
+            margin:{bottom:20, left:40, top:40, right:30}
         });
     });
 
