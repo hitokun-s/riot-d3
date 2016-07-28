@@ -13,6 +13,20 @@
 
             var data = opts.data;
 
+            if(opts.comp){
+                var sample = data[0].data || data[0].children || data[0];
+                console.log("sample", sample);
+                // TODO Too much assumption.
+                var categories = sample.map(function(d){
+                    return d.name;
+                });
+                var color = d3.scale.category20();
+                var colorScale = d3.scale.ordinal().domain(categories).range(sample.map(function(d,i){
+                    return color(i);
+                }));
+            }
+
+
             if(opts.patternFunc){
                 opts.patternFunc(base);
             }
@@ -88,7 +102,8 @@
                             asComp: true,
                             clickEventName: opts.clickEventName,
                             radius: d.radius, // 呼び出し側の責任で用意する
-                            orientation: opts.orientation
+                            orientation: opts.orientation,
+                            colorScale: colorScale
                         });
                     });
                 }else{
@@ -339,6 +354,20 @@
                     xAxisObj.append("text").text(opts.xTitle).style("text-anchor", "middle")
                             .attr("transform", "translate(130,40)");
                 }
+            }
+
+            // legends
+            if(opts.comp && opts.legend){
+                var legendLinear = d3.legend.color().shapeWidth(20).scale(colorScale)
+//                        .shape('circle')
+                        .shapePadding(10)
+//                        .orient('horizontal')
+                        .labelOffset(10);
+
+                base.append('g').attr({
+                    class: 'legendLinear',
+                    transform: translate(width, 0)
+                }).call(legendLinear);
             }
 
         });

@@ -2,7 +2,12 @@
     <script>
         this.mixin(RiotD3Mixin);
 
-        var color = d3.scale.category10();
+        var color20 = d3.scale.category20();
+        var color = opts.colorScale ? function(d,i){
+            return opts.colorScale(d.name);
+        }:function(d,i){
+            return color20(i);
+        }
 
         this.on("update", function () {
             console.log("stack update!");
@@ -30,7 +35,7 @@
                         .enter()
                         .append("rect").attr({
                             fill: function (d, i) {
-                                return color(i);
+                                return color(d, i);
                             },
                             y: -height / 2,
                             x: function (d, i) {
@@ -54,7 +59,7 @@
                         .enter()
                         .append("rect").attr({
                             fill: function (d, i) {
-                                return color(i);
+                                return color(d, i);
                             },
                             x: -width / 2,
                             y: function (d, i) {
