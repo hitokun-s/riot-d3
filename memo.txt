@@ -12,3 +12,7 @@ http://streamdata.io/blog/exploring-riot-js-part-3-1/
 http://streamdata.io/blog/exploring-riot-js-part3-2/
 http://streamdata.io/blog/exploring-riot-js-part3-3/
 
+#d3-legend
+
+http://d3-legend.susielu.com/
+http://d3-legend.susielu.com/#color-linear

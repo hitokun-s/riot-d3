@@ -13,7 +13,8 @@
 
             var data = opts.data;
 
-            if(opts.comp){
+            if(opts.comp && opts.comp != "profit-donut"){
+                console.log("data", data);
                 var sample = data[0].data || data[0].children || data[0];
                 console.log("sample", sample);
                 // TODO Too much assumption.
@@ -175,7 +176,7 @@
                         return opts.nameOnBarFormat ? opts.nameOnBarFormat(d.nameOnBar) : d.nameOnBar;
                     }).attr({
                         x: function(d){ return yScale(d.value); },
-                        dx: 10,
+                        dx: opts.nameOnBarMargin || 10,
                         dy: "0.3em",
                         class: "nameOnBar",
                         visibility: function(d){
@@ -332,7 +333,7 @@
                     bars.append("text").text(function(d){
                         return opts.nameOnBarFormat ? opts.nameOnBarFormat(d.nameOnBar) : d.nameOnBar;
                     }).attr({
-                        dy: -20,
+                        dy: opts.nameOnBarMargin || -20,
                         class: "nameOnBar",
                         visibility: function(d){
                             return d.transition ? "hidden": "visible";
@@ -366,8 +367,33 @@
 
                 base.append('g').attr({
                     class: 'legendLinear',
-                    transform: translate(width, 0)
+                    transform: translate(width, 10)
                 }).call(legendLinear);
+            }
+
+            if(opts.showLine){
+                // TODO 横向きチャートには未対応
+                //tmpTranslate
+                var pathData = data.map(function(d){
+                    //translate(xScale(d.name)+ xScale.rangeBand() / 2 , yScale(d.value));
+                    return {x: xScale(d.name)+ xScale.rangeBand() / 2, y:yScale(d.value)}
+                });
+                var line = d3.svg.line()
+                        .x(function (d) {return d.x})
+                        .y(function (d) {return d.y});
+//                        .interpolate("cardinal");
+                base.append("path").datum(pathData).classed("lineOnBar", true)
+                        .attr("d", line).attr({
+                    "stroke-dasharray":"3 3",
+                    stroke:"gray",
+                    fill:"none"
+                });
+                base.selectAll("circle.circleOnBar").data(pathData).enter().append("circle").classed("circleOnBar", true)
+                        .attr({
+                            cx: function(d){return d.x},
+                            cy: function(d){return d.y},
+                            r:5
+                        });
             }
 
         });

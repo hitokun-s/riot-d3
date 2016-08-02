@@ -21,19 +21,13 @@
             var margin = this.margin;
             var innerMargin = this.innerMargin;
 
-//            if(innerMargin && innerMargin.top){
-//                var tmp = base.attr("transform").match(/translate\((.*),(.*)\)/);
-//                var x = ~~tmp[1], y = ~~tmp[2];
-//                base.attr("transform", transform(x, y + innerMargin.top));
-//            }
-
             base.attr("class","treemap");
 
             if(opts.annotation){
                 base.append("text").text(opts.annotation).attr({
                     class: "annotation",
-                    x: width,
-                    y: -10
+                    x: width + opts.margin.right - 10,
+                    y: - opts.margin.top + 10
                 }).style("text-anchor", "end");
             }
 
@@ -47,22 +41,12 @@
             var treemap = d3.layout.treemap().size([width, height]).sticky(false).mode('slice-dice')
                     .children(function (d, depth) {
                         return depth >= showDepth ? null : d.children;
-                    });
-
-            // データ形式の想定
-//            data = {
-//                name: "",
-//                children: [
-//                    {
-//                        name: "right",
-//                        children: data.right
-//                    },
-//                    {
-//                        name: "left",
-//                        children: data.left
-//                    }
-//                ]
-//            };
+                    }).sort(function(a,b) {
+                        if(a.depth == 3 && b.depth == 3 && a.parent === b.parent && a.parent.parent.name == "right"){
+                            return a.value - b.value;
+                        }
+                        return b.value - a.value;
+                    })
 
             var treemapData = treemap.value(function (d) {
                 return d.value;
@@ -99,6 +83,8 @@
                         return d.depth == showDepth ? d.color : "transparent";
                     });
             if(opts.showText){
+                var hiddens = [];
+                var labelLevels = {};
                 boxGroup.append('text').text(function (d) {
                     return d.name;
                 })
@@ -138,9 +124,69 @@
                         return "tb";
                     }
                     this.setAttribute("visibility", "hidden");
+
+                    // TODO total * 0.1%みたいに直す！
+                    if(d.value > 5000 && d.depth == 3 && d.dy > 5){
+                        d.center = {x: d.x + d.dx / 2, y: d.y + d.dy / 2};
+                        if(d.x < width /2 - 10){
+                            d.outsideLabel = {
+                                x: -5,
+                                type: "left"
+                            }
+                        }else{
+                            d.outsideLabel = {
+                                x: width + 5,
+                                type: "right"
+                            }
+                        }
+                        if(labelLevels[d.y]){
+                            labelLevels[d.y]++;
+                            d.outsideLabel.y = d.y - 15 * (labelLevels[d.y] - 1);
+                        }else{
+                            labelLevels[d.y] = 1;
+                            d.outsideLabel.y = d.y ;
+                        }
+                        hiddens.push(d);
+                    }
                 }).attr("fill", function (d) {
                     // show labels only for the last children rect
                     return d.depth == showDepth ? "black" : "transparent";
+                });
+                var pathData = [];
+                base.selectAll("text.outsideLabel").data(hiddens).enter().append("text").attr({
+                    class: "outsideLabel",
+                    x: function (d) {
+                        return d.outsideLabel.x;
+                    },
+                    y: function (d) {
+                        return d.outsideLabel.y;
+                    },
+                    fill: "black",
+                    "stroke-width": 2,
+                    "font-weight": "bold",
+                    "font-family": "MS Gothic"
+                }).text(function (d) {
+                    return d.name;
+                })
+                        .style("text-anchor", function (d) {
+                            pathData.push([
+                                {x: d.outsideLabel.type == "left" ? -5 : d.outsideLabel.x, y: d.outsideLabel.y},
+                                d.center
+                            ]);
+                            return d.outsideLabel.type == "left" ? "end" : "start";
+                        });
+                var line = d3.svg.line()
+                        .x(function (d) {return d.x})
+                        .y(function (d) {return d.y})
+                        .interpolate("cardinal");
+                base.selectAll("path.outsideLine")
+                        .data(pathData)
+                        .enter()
+                        .append("path").classed("outsideLine", true)
+                        .attr("d", function (d) {
+                            return line(d);
+                        }).attr({
+                    stroke:"black"
                 });
             }
 

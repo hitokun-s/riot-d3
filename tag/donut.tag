@@ -4,7 +4,7 @@
 
         this.on("update", function () {
 
-            var color = d3.scale.category10();
+            var color = d3.scale.category20();
 
             var base = this.base;
             var width = this.width;
@@ -112,7 +112,15 @@
                         return d.value;
                     }).sort(null);
 
-            data.forEach(function(datum, i){
+            // bbox format: {start:{x:, y:}, end:{x:, y:}}
+            var intersect = function(bbox1, bbox2){
+                return bbox1.end.x > bbox2.start.x && bbox1.start.x < bbox2.end.x
+                    && bbox1.end.y > bbox2.start.y && bbox1.start.y < bbox2.end.y ;
+            }
+
+            data.forEach(function (datum, i) {
+
+                var bboxes = {};
 
                 var g = base.selectAll(".arc" + i)
                         .data(pie(datum))
@@ -127,29 +135,47 @@
                     RiotControl.trigger("donutClicked", d);
                 });
 
-                g.append("text")
-                        .attr("transform", function (d) {
-                            if(opts.labelOutside){
-                                d.innerRadius = radius;
-                                d.outerRadius = radius + 50;
-                                console.log(d);
-                                var t = arcs[i].centroid(d);
-                                var ratio = (radius + 30) / ((radius + innerRadius) / 2);
-                                return translate(t[0] * ratio, t[1] * ratio);
-                            } else {
-                                d.innerRadius = 0;
-                                d.outerRadius = radius;
-                                return "translate(" + arcs[i].centroid(d) + ")";
-                            }
-                        })
-                        .attr("dy", ".35em")
+                var texts = g.append("text").attr("transform", function (d) {
+                    var inner = arcs[i].innerRadius()();
+                    var outer = arcs[i].outerRadius()();
+                    if (opts.labelOutside && i == arcs.length - 1) {
+                        var t = arcs[i].centroid(d);
+                        var ratio = (radius + 25) / ((inner + outer) / 2);
+                        return translate(t[0] * ratio, t[1] * ratio);
+                    } else {
+                        d.innerRadius = 0;
+                        d.outerRadius = radius;
+                        return "translate(" + arcs[i].centroid(d) + ")";
+                    }
+                }).attr("dy", ".35em")
                         .style("text-anchor", "middle")
                         .text(function (d, i) {
                             return d.data.name;
-                        });
+                        }).each(function (d, idx) {
+                    var t = getTranslate(this.getAttribute("transform"));
+                    var tmpBBox = this.getBBox();
+                    var bbox = {
+                        start: {x: t.x + tmpBBox.x, y: t.y + tmpBBox.y},
+                        end: {x: t.x + tmpBBox.x + tmpBBox.width, y: t.y + tmpBBox.y + tmpBBox.height},
+                        data: d
+                    };
+                    d.bbox = bbox;
+                    bboxes[idx] = bbox;
+                });
+                texts.filter(function(d, idx){
+                    if(idx == 0)return false;
+                    console.log(d.bbox);
+                    console.log(bboxes[idx - 1]);
+                    return intersect(d.bbox, bboxes[idx - 1]);
+                }).each(function(d){
+                    console.log("hye!");
+                    console.log(d);
+                }).remove("*");
             });
+
+            
             if(metadata.title){
-                base.append("text").text(metadata.title).attr("font-size", "2em").style("text-anchor", "middle");
+                base.append("text").text(metadata.title).classed("title", true).style("text-anchor", "middle");
             }
             if(metadata.titleLeft){
                 base.append("text").text(metadata.titleLeft).style("text-anchor", "middle")
@@ -216,6 +242,23 @@
             if(opts.callback){
                 opts.callback(base);
             }
+
+            // legends TODO やっつけで最内側のドーナツについてのみ作ることにする。最悪だ。
+            if(opts.legend){
+                console.log("let's show legends!");
+                var sample = data[0];
+                var colorScale = d3.scale.ordinal().domain(sample.map(function(d){return d.name;}))
+                        .range(sample.map(function(d,i){
+                    return d.color || color(i);
+                }));
+                var legendLinear = d3.legend.color().shapeWidth(20).scale(colorScale)
+                        .shapePadding(10)
+                        .labelOffset(10);
+                base.append('g').attr({
+                    class: 'legendLinear',
+                    transform: translate(radius + 10, - radius)
+                }).call(legendLinear);
+            };
         });
     </script>
 </donut>

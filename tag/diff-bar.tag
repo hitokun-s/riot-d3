@@ -193,6 +193,21 @@
                 });
             }
 
+            bars.on("mouseover", function(d){
+                d.oriColor = d3.select(this).select("rect").attr("fill");
+                d3.select(this).selectAll("path,rect").attr({
+                    fill: "#fad1d1",
+                    stroke: "#fad1d1",
+                });
+                d3.select(this).select("text").attr("font-weight","bold");
+            }).on("mouseout", function(d){
+                d3.select(this).selectAll("path,rect").attr({
+                    fill: d.oriColor,
+                    stroke: d.oriColor,
+                });
+                d3.select(this).select("text").attr("font-weight","normal");
+            })
+
             console.log(pathData);
 
             base.selectAll("path.horizon")
