@@ -44,6 +44,7 @@
 <div class="container">
     <h1>Floating Bar Chart</h1>
     <div id="bar" class="bar"></div>
+    <div id="bar2" class="bar"></div>
 </div>
 
 <script>
@@ -102,7 +103,15 @@
             bottom:0,
             color: "lightblue"
         },
-    ]
+    ];
+
+    var data2 = [
+        {name: "A", value: 300},
+        {name: "B", diff: 100},
+        {name: "C", diff: -200},
+        {name: "D", diff: -100},
+        {name: "E", value: 100}
+    ];
 
     var globalObservable = riot.observable(); // Create a store instance.
     RiotControl.addStore(globalObservable);
@@ -112,6 +121,13 @@
             data: data,
             width: $('#bar').width(),
             height: $('#bar').height(),
+            color:"lightgrey",
+            margin:{bottom:20, left:30, top:30, right:30}
+        });
+        riot.mount($('#bar2')[0], "floating-bar", {
+            data: addFloating(data2),
+            width: $('#bar2').width(),
+            height: $('#bar2').height(),
             color:"lightgrey",
             margin:{bottom:20, left:30, top:30, right:30}
         });
