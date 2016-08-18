@@ -76,3 +76,8 @@ var pointInPolygon = function (point, vs) {
     }
     return inside;
 }
+
+// valueもしくはdiffをもつデータを受け取って、floatingデータ（bottom, top）を計算付加する
+var addFloating = function(data){
+    
+}

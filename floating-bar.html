@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Diff Bar Chart - Riot D3 -</title>
+    <!--<link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--<script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>-->
+    <!--<script type="text/javascript" src="lib/d3/d3.min.js"></script>-->
+    <!--<script type="text/javascript" src="lib/riot/riot+compiler.min.js"></script>-->
+    <!--<script type="text/javascript" src="lib/RiotControl/riotcontrol.js"></script>-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/riot/2.5/riot+compiler.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/jimsparkman/RiotControl/master/riotcontrol.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/init.js" type="riot/tag"></script>
+    <script src="tag/floating-bar.tag" type="riot/tag"></script>
+    <style>
+        .arc path {
+            stroke: #fff;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: black;
+        }
+
+        .tick text {
+            font-size: 12px;
+        }
+
+        .tick line {
+            opacity: 0.2;
+        }
+
+        .bar {
+            width: 700px;
+            height: 350px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Floating Bar Chart</h1>
+    <div id="bar" class="bar"></div>
+</div>
+
+<script>
+    var data = [
+        {
+            "name": "2000a",
+            top: 500,
+            bottom:0,
+            color: "lightblue"
+        },
+        {
+            "name": "2000b",
+            top: 600,
+            bottom:500,
+            nameOnBar: "diff"
+        },
+        {
+            "name": "2000c",
+            top: 600,
+            bottom:300,
+            nameOnBar: "diff"
+        },
+        {
+            "name": "2000d",
+            top: 400,
+            bottom:300,
+            nameOnBar: "diff"
+        },
+        {
+            "name": "2001a",
+            top: 400,
+            bottom:0,
+            color: "lightblue"
+        },
+        {
+            "name": "2001b",
+            top: 700,
+            bottom:400,
+            nameOnBar: "diff"
+        },
+        {
+            "name": "2001c",
+            top: 700,
+            bottom: 600,
+            nameOnBar: "diff"
+        },
+        {
+            "name": "2001d",
+            top: 600,
+            bottom: 200,
+            nameOnBar: "diff"
+        },
+        {
+            "name": "2001e",
+            top: 200,
+            bottom:0,
+            color: "lightblue"
+        },
+    ]
+
+    var globalObservable = riot.observable(); // Create a store instance.
+    RiotControl.addStore(globalObservable);
+
+    riot.compile(function(){
+        riot.mount($('#bar')[0], "floating-bar", {
+            data: data,
+            width: $('#bar').width(),
+            height: $('#bar').height(),
+            color:"lightgrey",
+            margin:{bottom:20, left:30, top:30, right:30}
+        });
+
+    });
+
+    RiotControl.on("rectClicked", function (data) {
+        console.log("rectClicked");
+    });
+
+</script>
+</body>
+</html>
