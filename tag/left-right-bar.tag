@@ -15,8 +15,6 @@
                     var max = opts.max || d3.max(data.map(function (d) {
                                 return Math.abs(d.value);
                             }));
-                    console.log(max);
-                    console.log("width:", width);
 
                     if (opts.annotation) {
                         base.append("text").text(opts.annotation).attr({
@@ -161,7 +159,9 @@
                             x: function (d) {
                                 return yScale(d.value);
                             },
-                            dx: opts.nameOnBarMargin || 10,
+                            dx: function(d){
+                                return (d.value >= 0 ? 1 : -1) * (opts.nameOnBarMargin || 10);
+                            },
                             dy: "0.3em",
                             class: "nameOnBar",
                             visibility: function (d) {
@@ -170,7 +170,9 @@
                             fill: function (d) {
                                 return d.color || "red";
                             }
-                        }).style("text-anchor", "start");
+                        }).style("text-anchor", function(d){
+                            return d.value >= 0 ? "start" : "end";
+                        });
                     }
 
 //                    if (opts.showXAxis == undefined || opts.showXAxis) {
