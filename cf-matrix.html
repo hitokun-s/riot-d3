@@ -25,6 +25,7 @@
         .axis line {
             fill: none;
             stroke: black;
+            stroke-width: 0.5;
         }
 
         .tick text {
@@ -50,8 +51,8 @@
 <script>
     var data = [
         {fy:2014, x:30, y:20},
-        {fy:2015, x:50, y:-50},
-        {fy:2016, x:-30, y:20},
+        {fy:2015, x:50, y:-30},
+        {fy:2016, x:60, y:10},
     ]
 
     var globalObservable = riot.observable(); // Create a store instance.
@@ -66,7 +67,7 @@
             xTitle: "営業CF",
             yTitle: "投資CF",
             max: 80,
-            margin:{bottom:20, left:30, top:40, right:30}
+            margin:{bottom:20, left:20, top:60, right:60}
         });
     });
 

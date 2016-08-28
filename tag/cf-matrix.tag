@@ -49,8 +49,8 @@
             });
             var line = d3.svg.line()
                     .x(function (d) {return d.x})
-                    .y(function (d) {return d.y})
-                    .interpolate("cardinal");
+                    .y(function (d) {return d.y});
+//                    .interpolate("cardinal");
             base.append("path").attr({
                 d: line([{x: -size/2, y:-size/2}, {x:size/2, y:size/2}]),
                 stroke:"white",
@@ -58,12 +58,12 @@
             });
 
             base.selectAll(".areaTitle").data([
-                {x: size/2 - 10, y: -size/2 + 15, text:"停滞期", "text-anchor": "end"},
-                {x: -size/2 + 10, y: size/2 - 15, text:"破綻期", "text-anchor": "start"},
-                {x: -size/2 + 10, y: 0 - 15, text:"後退期", "text-anchor": "start"},
-                {x: 0 - 10, y: -size/2 + 15, text:"低迷期", "text-anchor": "end"},
-                {x: 0 + 10, y: size/2 - 15, text:"投資期", "text-anchor": "start"},
-                {x: size/2 - 10, y: 0 + 15, text:"安定期", "text-anchor": "end"},
+                {x: size / 2 - 10, y: -size / 2 + 15, text: "停滞期", "text-anchor": "end"},
+                {x: -size / 2 + 10, y: size / 2 - 15, text: "破綻期", "text-anchor": "start"},
+                {x: -size / 2 + 10, y: 0 - 15, text: "後退期", "text-anchor": "start"},
+                {x: 0 - 10, y: -size / 2 + 15, text: "低迷期", "text-anchor": "end"},
+                {x: 0 + 10, y: size / 2 - 15, text: "投資期", "text-anchor": "start"},
+                {x: size / 2 - 10, y: 0 + 15, text: "安定期", "text-anchor": "end"},
             ]).enter().append("text").attr({
                 class:"areaTitle",
                 x: function(d){return d.x},
@@ -71,7 +71,6 @@
                 dy: "0.35em",
                 "text-anchor": function(d){return d["text-anchor"]}
             }).text(function(d){return d.text});
-
 
                     var xScale = d3.scale.linear().domain([-max, max]).range([-size / 2, size / 2]);
                     var yScale = d3.scale.linear().domain([-max, max]).range([size / 2, -size / 2]);
@@ -81,10 +80,39 @@
                 d: line(data.map(function(d){
                     return {x:xScale(d.x), y:yScale(d.y)};
                 })),
-                stroke:"red",
-                "stroke-width":2,
+                stroke:"grey",
+                "stroke-width":1.5,
                 fill:"none"
             });
+
+            // vertec
+            var newestYear = d3.max(data.map(function (d) {
+                return d.fy;
+            }));
+            base.selectAll("circle").data(data).enter().append("circle").attr({
+               cx:function(d){return xScale(d.x)},
+               cy:function(d){return yScale(d.y)},
+                r: 5,
+                fill: function(d){return d.fy == newestYear ? "lightcoral": "grey"},
+                stroke:"grey"
+            });
+
+            // arrows for axis
+            var marker = base.append("defs").append("marker").attr({
+                        'id': "arrowhead",
+                        markerUnits: "userSpaceOnUse",
+                        'refX': 0, // to hide boundary line between body and arrow
+                        'refY': 7,
+                        'markerWidth': 10,
+                        'markerHeight': 14,
+                        'orient': "auto"
+//                        'orient': "auto-start-reverse"
+                    });
+                marker.append("path").attr({
+                    d: "M0,0L0,14L10,7", // reverse arrow
+                    fill: "grey",
+                    visibility:"visible"
+                });
 
                     var yAxis = d3.svg.axis()
                             .scale(yScale)
@@ -110,9 +138,12 @@
                     }
 
                     if (opts.yTitle) {
-                        yAxisObj.append("text")
-                                .text(opts.yTitle).style("text-anchor", "end")
-                                .attr("transform", translate(0, -size/2));
+                        base.select(".y").append("text").text(opts.yTitle)
+                                .attr({
+                                    transform: translate(0, -size/2 - 14),
+                                    visibility: "visible"
+                                })
+                                .style("text-anchor", "middle");
                     }
 
                     if (opts.showXAxis == undefined || opts.showXAxis) {
@@ -122,9 +153,21 @@
                     }
 
                     if (opts.xTitle) {
-                        xAxisObj.append("text").text(opts.xTitle).style("text-anchor", "middle")
-                                .attr("transform", translate(size/2, 0));
+                        base.select(".x").append("text").text(opts.xTitle).style("text-anchor", "start")
+                                .attr("transform", translate(size/2 + 14, 0)).attr("dy","0.35em");
                     }
+
+                    base.selectAll(".arrow").data([
+                        [{x: 0, y: -size/2}, {x: 0, y: -size/2 - 2}],
+                        [{x: 0, y: size/2}, {x: 0, y: size/2 + 2}],
+                        [{x: -size/2, y: 0}, {x: -size/2 - 2, y: 0}],
+                        [{x: size/2, y: 0}, {x: size/2 + 2, y: 0}],
+                    ]).enter().append("path").attr({
+                        d: line,
+                        class:"arrow",
+                        stroke: "grey",
+                        'marker-end':"url(#arrowhead)",
+                    });
 
             }
     );
